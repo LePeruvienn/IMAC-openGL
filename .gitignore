@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Ignore files in /build & /bin
+build/**
+bin/**
