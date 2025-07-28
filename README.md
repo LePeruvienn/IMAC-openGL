@@ -1,3 +1,5 @@
+![hellotriangle](READMEassets/hellotriangle.png)
+
 # Simple-Glimac-Setup
 
 This is the setup to follow [these tutorials](https://igm.univ-mlv.fr/~biri/Enseignement/IMAC2/opengl-TPs/opengl.php?section=teaching&teaching=opengl&teaching_section=tds).
