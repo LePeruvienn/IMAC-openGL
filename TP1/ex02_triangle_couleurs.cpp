@@ -89,11 +89,19 @@ int main(int /*argc*/, char** argv)
 		return -1;
 	}
 
+
 	// Chargement des shaders, compilation et d'indiquer à OpenGL de les utiliser.
-	glimac::FilePath applicationPath(argv[0]);
-	glimac::Program program = loadProgram(applicationPath.dirPath() + "TP1/shaders/triangle.vs.glsl",
-	                                      applicationPath.dirPath() + "TP1/shaders/triangle.fs.glsl");
-	program.use();
+	// ⚠️ On doit mettre ces variables dans un nouveau scope car sinon elle ne sont pas bien détruite à la fin du programme ce qui cause une erreur de segmentation
+	{
+		// On récupère le chemin d'ou est executé le programme
+		glimac::FilePath applicationPath(argv[0]);
+
+		// On charge les shaders
+		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP1/shaders/triangle.vs.glsl",
+											  applicationPath.dirPath() + "TP1/shaders/triangle.fs.glsl");
+		// On dit à OpenGL de les utiliser
+		program.use();
+	}
 
 	/* Hook input callbacks */
 	glfwSetKeyCallback(window, &key_callback);
@@ -205,7 +213,7 @@ int main(int /*argc*/, char** argv)
 			3); // Le nombre de points à tracer (ici 3)
 
 		// On debind le VAO afin qu'on ne le modifie pas par erreur dans le reste du code
-		glBindVertexArray(vao);
+		glBindVertexArray(0);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

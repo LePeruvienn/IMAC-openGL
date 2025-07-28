@@ -181,7 +181,7 @@ int main()
 			3); // Le nombre de points à tracer (ici 3)
 
 		// On debind le VAO afin qu'on ne le modifie pas par erreur dans le reste du code
-		glBindVertexArray(vao);
+		glBindVertexArray(0);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
