@@ -97,8 +97,8 @@ int main(int /*argc*/, char** argv)
 		glimac::FilePath applicationPath(argv[0]);
 
 		// On charge les shaders
-		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP1/shaders/triangle.vs.glsl",
-											  applicationPath.dirPath() + "TP1/shaders/triangle.fs.glsl");
+		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP2/shaders/color2D.vs.glsl",
+		                                      applicationPath.dirPath() + "TP2/shaders/color2D.fs.glsl");
 		// On dit à OpenGL de les utiliser
 		program.use();
 	}
@@ -152,8 +152,8 @@ int main(int /*argc*/, char** argv)
 	
 	// Pour rendre le code plus clair ou utilise souvents des constantes pour définir les indexs des attribut.
 	// Ici on voit que dans notre shader (triangle.vs.glsl), les attributs sont 3 et 8.
-	const GLuint VERTEX_ATTR_POSITION = 3;
-	const GLuint VERTEX_ATTR_COLOR = 8;
+	const GLuint VERTEX_ATTR_POSITION = 0;
+	const GLuint VERTEX_ATTR_COLOR = 1;
 
 	// On active les deux attributs !
 	glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
