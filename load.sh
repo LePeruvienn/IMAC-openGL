@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Le but de ce script est de pouvoir compiler et lancer facilement les binaires des différents exercices.
-# Pour cela il suffit simplement de passer ces deux argements :
+# Pour cela on lance le script puis on passe en arguement tout les filtre de nom qu'on veut.
+#
+# Exemple : `load.sh tp2 triangle couleur`
+#
+# - D'abord on prend seulement les fichiers qui ont les caractère tp2 (majuscule et minuscule), donc on as tout les fichier du tp2
+# - On cherche apres dans ceux la ceux qui contienne le mot triangle.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
