@@ -58,7 +58,7 @@ static void size_callback(GLFWwindow* /*window*/, int width, int height)
 	window_height = height;
 }
 
-int main(int /*argc*/, char** argv)
+int main(int argc, char** argv)
 {
 	/* Initialize the library */
 	if (!glfwInit()) {
@@ -89,6 +89,11 @@ int main(int /*argc*/, char** argv)
 		return -1;
 	}
 
+	// On regarde si on as bien deux arguments entrée :
+	if (argc < 3) {
+		std::cerr << "Erreur : veuillez au moins entrez 2 arguments" << std::endl;
+		return -1;
+	}
 
 	// Chargement des shaders, compilation et d'indiquer à OpenGL de les utiliser.
 	// ⚠️ On doit mettre ces variables dans un nouveau scope car sinon elle ne sont pas bien détruite à la fin du programme ce qui cause une erreur de segmentation
@@ -96,9 +101,13 @@ int main(int /*argc*/, char** argv)
 		// On récupère le chemin d'ou est executé le programme
 		glimac::FilePath applicationPath(argv[0]);
 
+		std::string shadersPath = "TP2/shaders/";
+		std::string vertexShaderName = argv[1];
+		std::string fragmentShaderName = argv[2];
+
 		// On charge les shaders
-		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP2/shaders/color2D.vs.glsl",
-		                                      applicationPath.dirPath() + "TP2/shaders/color2D.fs.glsl");
+		glimac::Program program = loadProgram(applicationPath.dirPath() + shadersPath + vertexShaderName,
+		                                      applicationPath.dirPath() + shadersPath + fragmentShaderName);
 		// On dit à OpenGL de les utiliser
 		program.use();
 	}
