@@ -1,26 +1,4 @@
-/*
- * Un petit récapitulatif des étapes effectuées pour dessiner le carré:
- *
- *  1) Initialisation:
- *     - Création du VBO
- *     - Binding du VBO
- *     - Envoie des données de vertex
- *     - Débinding du VBO
- *     - Création du VAO
- *     - Binding du VAO
- *     - Activation de l'attribut de sommet 0 (la position)
- *     - Spécification de l'attribut de sommet 0
- *     - Débinding du VAO
- *
- *  2) Dessin:
- *     - Binding du VAO
- *     - Appel à la fonction de dessin
- *     - Débinding du VAO
- *
- *  3) Libération des resources
- *
- */
-
+#include <cstdint>
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
@@ -28,17 +6,18 @@
 #include <glimac/FilePath.hpp>
 #include <glimac/glm.hpp>
 #include <cstddef>
+#include <vector>
 
 int window_width  = 800;
 int window_height = 800;
 
 // Structure exo03
-struct Vertex2DColor {
+struct Vertex2D {
 
 	glm::vec2 position;
 	glm::vec3 color;
-	Vertex2DColor () : position(0,0), color(0,0,0) {};
-	Vertex2DColor (glm::vec2 position, glm::vec3 color) : position(position), color(color) {};
+	Vertex2D() : position(0,0) {};
+	Vertex2D(glm::vec2 position) : position(position) {};
 };
 
 static void key_callback(GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/)
@@ -85,7 +64,7 @@ int main(int /*argc*/, char** argv)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
-	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP2", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP1", nullptr, nullptr);
 
 	if (!window) {
 		glfwTerminate();
@@ -108,8 +87,8 @@ int main(int /*argc*/, char** argv)
 		glimac::FilePath applicationPath(argv[0]);
 
 		// On charge les shaders
-		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP1/shaders/triangle.vs.glsl",
-											  applicationPath.dirPath() + "TP1/shaders/triangle.fs.glsl");
+		glimac::Program program = loadProgram(applicationPath.dirPath() + "TP2/shaders/mandelbrot.vs.glsl",
+											  applicationPath.dirPath() + "TP2/shaders/mandelbrot.fs.glsl");
 		// On dit à OpenGL de les utiliser
 		program.use();
 	}
@@ -134,31 +113,52 @@ int main(int /*argc*/, char** argv)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// On peut à présent modifier le VBO en passant par la cible GL_ARRAY_BUFFER
 	
-	// Créations des vertices du carré
-	// Pour cela il faut définir deux triangle qui les deuix assemblé formerons un carré
-	Vertex2DColor vertices[] = { 
+	// Créations des vertices du disque
+	// Pour cela il faut définit d'abord notre tableau de triangles à déssiner
+	std::vector<Vertex2D> vertices = {
 
 		// Premier triange (haut) :
-		Vertex2DColor(glm::vec2(-0.5, 0.5), glm::vec3(1, 0, 0)), // Haut gauche
-		Vertex2DColor(glm::vec2(-0.5, -0.5), glm::vec3(0, 1, 0)), // Bas gauche
-		Vertex2DColor(glm::vec2(0.5, 0.5), glm::vec3(0, 0, 1)), // Haut droite
+		Vertex2D(glm::vec2(-0.5, 0.5)), // Haut gauche
+		Vertex2D(glm::vec2(-0.5, -0.5)), // Bas gauche
+		Vertex2D(glm::vec2(0.5, 0.5)), // Haut droite
 
 		// Deuxième triangle (bas) :
-		Vertex2DColor(glm::vec2(0.5, -0.5), glm::vec3(1, 0, 0)), // Bas droite
-		Vertex2DColor(glm::vec2(-0.5, -0.5), glm::vec3(0, 1, 0)), // Bas gauche
-		Vertex2DColor(glm::vec2(0.5, 0.5), glm::vec3(0, 0, 1)), // Haut droite
+		Vertex2D(glm::vec2(0.5, -0.5)), // Bas droite
+		Vertex2D(glm::vec2(-0.5, -0.5)), // Bas gauche
+		Vertex2D(glm::vec2(0.5, 0.5)), // Haut droite
 	};
+
+	// Création de la liste des indices
+	// Ici on va stocker tiout les indices
+	std::vector<uint32_t> indices = {0, 1, 2, 1, 2, 3};
 
 	// Remplissage du VBO, on envoie les données des vertices
 	glBufferData(
 		GL_ARRAY_BUFFER, // La cible ou le VBO est bindé
-		6 * sizeof(Vertex2DColor), // La taille du tableau en **octets** (3 point dont les données sont 3 Vertex2DColor)
-		vertices, // Le pointeur vers le données (ici les vertices)
+		vertices.size() * sizeof(Vertex2D), // Ici la taille du tableau est celle du nombre de vertices + la taille des données d'un vertexe
+		vertices.data(), // Il faut donner seulement les données de l'objet
 		GL_STATIC_DRAW); // Un flag qui dit à OpenGL ce qu'on va faire du buffer (ici on va juste faire un dessin satatique)
 	
 	// On débind le buffer quand on as fini pour évitez de le modifer par erreur
 	glBindBuffer (GL_ARRAY_BUFFER, 0);
 
+	// => Creation du IBO
+	GLuint ibo;
+	glGenBuffers(1, &ibo);
+
+	// => On bind sur GL_ELEMENT_ARRAY_BUFFER, cible reservée pour les IBOs
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+	// => On remplit l'IBO avec les indices:
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices.size() * sizeof(uint32_t),
+		indices.data(),
+		GL_STATIC_DRAW
+	);
+
+	// => Comme d'habitude on debind avant de passer à autre chose
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	// Création du VAO (Vertex Array Object) -> Il vont nous servir à aider OpenGL à interprétez les données qu'on lui as envoyé dans le VBO
 	GLuint vao;
@@ -167,16 +167,18 @@ int main(int /*argc*/, char** argv)
 	// On bind le VAO avant de l'utiliser
 	glBindVertexArray(vao);
 
+	// => On bind l'IBO sur GL_ELEMENT_ARRAY_BUFFER; puisqu'un VAO est actuellement bindé,
+	// cela a pour effet d'enregistrer l'IBO dans le VAO
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
 	// Activation des attribut de vertex
 	
 	// Pour rendre le code plus clair ou utilise souvents des constantes pour définir les indexs des attribut.
 	// Ici on voit que dans notre shader (triangle.vs.glsl), les attributs sont 3 et 8.
 	const GLuint VERTEX_ATTR_POSITION = 3;
-	const GLuint VERTEX_ATTR_COLOR = 8;
 
 	// On active les deux attributs !
 	glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
-	glEnableVertexAttribArray(VERTEX_ATTR_COLOR);
 
 	// ⚠️ les index des attribut et ceux de la liste ne sont pas du tout la meme chose il ne faut pas se confondre
 	
@@ -190,17 +192,8 @@ int main(int /*argc*/, char** argv)
 		2, // Nombre de composante de l'attribut
 		GL_FLOAT, // Type de l'attribut
 		GL_FALSE, // GLNormalized : pas besoin de s'occuper de ça pour le moment
-		sizeof(Vertex2DColor), // Combien d'octet mesure chaque attribut (ici notre position est 2 GLfloat donc 2 fois leurs taille)
-		(const GLvoid*) (offsetof(Vertex2DColor, position))); // Offset par rapport au début de l'attribut, on veut l'offset de la position
-
-	// Spécifcation des données de couleurs
-	glVertexAttribPointer(
-		VERTEX_ATTR_COLOR, // Index de l'attribut
-		3, // Nombre de composante de l'attribut
-		GL_FLOAT, // Type de l'attribut
-		GL_FALSE, // GLNormalized : pas besoin de s'occuper de ça pour le moment
-		sizeof(Vertex2DColor), // Combien d'octet mesure chaque attribut (ici tout les données sont dans un seul struc Vertex2DColor
-		(const GLvoid*) (offsetof(Vertex2DColor, color))); // Offset par rapport au début de l'attribut, on veut l'offset de la couleur
+		sizeof(Vertex2D), // Combien d'octet mesure chaque attribut (ici notre position est 2 GLfloat donc 2 fois leurs taille)
+		(const GLvoid*) (offsetof(Vertex2D, position))); // Offset par rapport au début de l'attribut, on veut l'offset de la position
 	
 
 	// On débind le VAO pour pas le remodifier par erreur
@@ -226,10 +219,12 @@ int main(int /*argc*/, char** argv)
 		glBindVertexArray(vao);
 
 		// On fait un drawcall sur le VAO
-		glDrawArrays(
-			GL_TRIANGLES, // Le mode de déssin, ici notre but est de déssiner un carré qui comprend 2 triangles donc 6 sommets
-			0, // Le premier sommet dans le VBO (ici les données du sommet commence des le début de l'array donc 0)
-			6); // Le nombre de points à tracer (ici 6)
+		glDrawElements(
+			GL_TRIANGLES,
+			indices.size(),
+			GL_UNSIGNED_INT,
+			0
+		);
 
 		// On debind le VAO afin qu'on ne le modifie pas par erreur dans le reste du code
 		glBindVertexArray(0);

@@ -48,7 +48,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP1", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP2", nullptr, nullptr);
 	if (!window) {
 		glfwTerminate();
 		return -1;
