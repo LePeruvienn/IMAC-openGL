@@ -14,7 +14,8 @@ mat3 rotate(float a) {
 
 void main() {
 
-	vec2 position = aVertexPosition * rotate(uTime);
+	mat3 R = rotate(uTime);
+	vec2 transfomed = vec3(R * vec3(aVertexPosition, 1)).xy;
 
-	gl_Position = vec4(position, 0, 1);
+	gl_Position = vec4(transfomed, 0, 1);
 }

@@ -100,6 +100,9 @@ int main(int /*argc*/, char** argv)
 		return -1;
 	}
 
+	GLint uTimeLocation;
+	float uTimeValue = 0;
+
 	// Chargement des shaders, compilation et d'indiquer à OpenGL de les utiliser.
 	// ⚠️ On doit mettre ces variables dans un nouveau scope car sinon elle ne sont pas bien détruite à la fin du programme ce qui cause une erreur de segmentation
 	{
@@ -111,6 +114,10 @@ int main(int /*argc*/, char** argv)
 											  applicationPath.dirPath() + "TP2/shaders/text2D.fs.glsl");
 		// On dit à OpenGL de les utiliser
 		program.use();
+
+		uTimeLocation = glGetUniformLocation(program.getGLId(), "uTime");
+
+		glUniform1f(uTimeLocation, uTimeValue);
 	}
 
 	/* Hook input callbacks */
@@ -198,6 +205,9 @@ int main(int /*argc*/, char** argv)
 		/*********************************
 		* HERE SHOULD COME THE RENDERING CODE
 		*********************************/
+
+		uTimeValue += 0.01;
+		glUniform1f(uTimeLocation, uTimeValue);
 
 		// On bind le VAO pour récupérer les données
 		glBindVertexArray(vao);
