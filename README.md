@@ -1,4 +1,6 @@
 ![hellotriangle](READMEassets/hellotriangle.png)
+![hellotriangle](READMEassets/mandelbrot.png)
+
 
 # Simple-Glimac-Setup
 
@@ -31,3 +33,4 @@ To learn more about the parameters you receive in the callbacks, read [glfw's do
 ## assets
 
 The *assets* folder will be copied to the folder where your executable is created. You can put all the assets that your project needs in there, like textures, shaders, 3D models *etc.*
+
