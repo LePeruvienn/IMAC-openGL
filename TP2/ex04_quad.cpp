@@ -204,7 +204,7 @@ int main(int /*argc*/, char** argv)
 	
 
 	// On débind le VAO pour pas le remodifier par erreur
-	glBindVertexArray(vao);
+	glBindVertexArray(0);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
