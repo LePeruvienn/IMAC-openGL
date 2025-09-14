@@ -8,16 +8,16 @@ foreach(EXE_SRC_FILE ${EXE_SRC_FILES})
 	get_filename_component(FILE ${EXE_SRC_FILE} NAME_WE)
 	get_filename_component(DIR ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-    set(OUTPUT ${DIR}_${FILE})
-    message(STATUS "Configuring executable ${OUTPUT}")
+	set(OUTPUT ${DIR}_${FILE})
+	message(STATUS "Configuring executable ${OUTPUT}")
 	set(SRC_FILES ${EXT_SRC_FILES} ${EXE_SRC_FILE})
 	add_executable(${OUTPUT} ${SRC_FILES} ${HEADER_FILES})
 
-    target_link_libraries(${OUTPUT} glimac)
-    target_include_directories(${OUTPUT} PUBLIC glimac)
-    target_include_directories(${OUTPUT} PUBLIC glimac/third-party/glad/include)
+	target_link_libraries(${OUTPUT} glimac)
+	target_include_directories(${OUTPUT} PUBLIC glimac)
+	target_include_directories(${OUTPUT} PUBLIC glimac/third-party/glad/include)
 
-    set_target_properties(${OUTPUT} PROPERTIES
+	set_target_properties(${OUTPUT} PROPERTIES
 		CXX_STANDARD 11
 		CXX_STANDARD_REQUIRED YES
 		CXX_EXTENSIONS NO

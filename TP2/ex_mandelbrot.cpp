@@ -64,7 +64,7 @@ int main(int /*argc*/, char** argv)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
 
-	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP1", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(window_width, window_height, "TP2", nullptr, nullptr);
 
 	if (!window) {
 		glfwTerminate();
@@ -118,14 +118,14 @@ int main(int /*argc*/, char** argv)
 	std::vector<Vertex2D> vertices = {
 
 		// Premier triange (haut) :
-		Vertex2D(glm::vec2(-0.5, 0.5)), // Haut gauche
-		Vertex2D(glm::vec2(-0.5, -0.5)), // Bas gauche
-		Vertex2D(glm::vec2(0.5, 0.5)), // Haut droite
+		Vertex2D(glm::vec2(-1, 1)), // Haut gauche
+		Vertex2D(glm::vec2(-1, -1)), // Bas gauche
+		Vertex2D(glm::vec2(1, 1)), // Haut droite
 
 		// Deuxième triangle (bas) :
-		Vertex2D(glm::vec2(0.5, -0.5)), // Bas droite
-		Vertex2D(glm::vec2(-0.5, -0.5)), // Bas gauche
-		Vertex2D(glm::vec2(0.5, 0.5)), // Haut droite
+		Vertex2D(glm::vec2(1, -1)), // Bas droite
+		Vertex2D(glm::vec2(-1, -1)), // Bas gauche
+		Vertex2D(glm::vec2(1, 1)), // Haut droite
 	};
 
 	// Création de la liste des indices
