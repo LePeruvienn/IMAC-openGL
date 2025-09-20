@@ -215,7 +215,12 @@ int main(int /*argc*/, char** argv)
 		* HERE SHOULD COME THE RENDERING CODE
 		*********************************/
 
+		// Add elapsed time (i know it's bad but idk how to get deltaTime yet)
 		time += 0.01;
+
+		// On bind le VAO pour récupérer les données
+		glBindVertexArray(vao);
+
 		uModelMatrixValue = rotate(time);
 
 		glUniformMatrix3fv(
@@ -225,8 +230,22 @@ int main(int /*argc*/, char** argv)
 			&uModelMatrixValue[0][0]
 		);
 
-		// On bind le VAO pour récupérer les données
-		glBindVertexArray(vao);
+		// On déssiner les données dans le VAO
+		glDrawArrays(
+			GL_TRIANGLES,
+			0,
+			vertices.size()
+		);
+
+
+		uModelMatrixValue = rotate(time * - 1);
+
+		glUniformMatrix3fv(
+			uModelMatrixLocation,
+			1,
+			GL_FALSE,
+			&uModelMatrixValue[0][0]
+		);
 
 		// On déssiner les données dans le VAO
 		glDrawArrays(
