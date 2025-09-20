@@ -5,6 +5,9 @@ layout(location = 1) in vec2 aVertexTexture;
 
 // uniform float uTime;
 uniform mat3 uModelMatrix;
+uniform vec3 uColor;
+
+out vec3 vColor;
 
 // mat3 rotate(float a) {
 
@@ -15,7 +18,8 @@ uniform mat3 uModelMatrix;
 
 void main() {
 
-	vec2 transfomed = vec3(uModelMatrix * vec3(aVertexPosition, 1)).xy;
+	vColor = uColor;
 
+	vec2 transfomed = vec3(uModelMatrix * vec3(aVertexPosition, 1)).xy;
 	gl_Position = vec4(transfomed, 0, 1);
 }

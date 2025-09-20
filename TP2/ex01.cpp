@@ -107,6 +107,8 @@ int main(int /*argc*/, char** argv)
 	GLint uModelMatrixLocation;
 	glm::mat3 uModelMatrixValue = rotate(time);
 
+	GLint uColorLocation;
+
 	// Chargement des shaders, compilation et d'indiquer à OpenGL de les utiliser.
 	// ⚠️ On doit mettre ces variables dans un nouveau scope car sinon elle ne sont pas bien détruite à la fin du programme ce qui cause une erreur de segmentation
 	{
@@ -120,6 +122,7 @@ int main(int /*argc*/, char** argv)
 		program.use();
 
 		uModelMatrixLocation = glGetUniformLocation(program.getGLId(), "uModelMatrix");
+		uColorLocation = glGetUniformLocation(program.getGLId(), "uColor");
 
 		glUniformMatrix3fv(
 			uModelMatrixLocation,
@@ -127,6 +130,8 @@ int main(int /*argc*/, char** argv)
 			GL_FALSE,
 			&uModelMatrixValue[0][0]
 		);
+
+		glUniform3f(uColorLocation, 0, 0, 0);
 	}
 
 	/* Hook input callbacks */
@@ -149,9 +154,9 @@ int main(int /*argc*/, char** argv)
 
 	// Création des données des sommets
 	std::vector<Vertex2DUV> vertices = {
-		Vertex2DUV(glm::vec2(-1, -1)),
-		Vertex2DUV(glm::vec2(1, -1)),
-		Vertex2DUV(glm::vec2(0, 1))
+		Vertex2DUV(glm::vec2(-0.25, -0.25)),
+		Vertex2DUV(glm::vec2(0.25, -0.25)),
+		Vertex2DUV(glm::vec2(0, 0.25))
 	};
 
 	// On rempli les données du VBO
@@ -221,7 +226,29 @@ int main(int /*argc*/, char** argv)
 		// On bind le VAO pour récupérer les données
 		glBindVertexArray(vao);
 
-		uModelMatrixValue = rotate(time);
+		// vvv Triangle qui tourne au centre gauche;
+		uModelMatrixValue = translate(-0.35, 0) * rotate(time);
+
+		glUniform3f(uColorLocation, 1, 0, 0);
+
+		glUniformMatrix3fv(
+			uModelMatrixLocation,
+			1,
+			GL_FALSE,
+			&uModelMatrixValue[0][0]
+		);
+
+		// On déssiner les données dans le VAO
+		glDrawArrays(
+			GL_TRIANGLES,
+			0,
+			vertices.size()
+		);
+
+		// vvv Triangle qui tourne au sens inverse au centre droite;
+		uModelMatrixValue = translate(0.35, 0) * rotate(time * -1);
+
+		glUniform3f(uColorLocation, 1, 0, 1);
 
 		glUniformMatrix3fv(
 			uModelMatrixLocation,
@@ -238,7 +265,27 @@ int main(int /*argc*/, char** argv)
 		);
 
 
-		uModelMatrixValue = rotate(time * - 1);
+		// vvv Triangle qui tourne autour du centre à gauche au à gauche;
+		uModelMatrixValue = rotate(time * - 1) * translate(-1.0, 0);
+
+		glUniform3f(uColorLocation, 0, 1, 0);
+
+		glUniformMatrix3fv(
+			uModelMatrixLocation,
+			1,
+			GL_FALSE,
+			&uModelMatrixValue[0][0]
+		);
+
+		// On déssiner les données dans le VAO
+		glDrawArrays(
+			GL_TRIANGLES,
+			0,
+			vertices.size()
+		);
+
+		// vvv Triangle qui tourne autour du centre à droite au à gauche, il faut le flip comme ça il est orienter du bon sens
+		uModelMatrixValue = rotate(time * - 1) * translate(1.0, 0) * scale(-1.0, -1.0);
 
 		glUniformMatrix3fv(
 			uModelMatrixLocation,
