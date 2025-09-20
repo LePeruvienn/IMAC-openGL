@@ -1,26 +1,4 @@
-/*
- * Un petit récapitulatif des étapes effectuées pour dessiner le triangle:
- *
- *  1) Initialisation:
- *     - Création du VBO
- *     - Binding du VBO
- *     - Envoie des données de vertex
- *     - Débinding du VBO
- *     - Création du VAO
- *     - Binding du VAO
- *     - Activation de l'attribut de sommet 0 (la position)
- *     - Spécification de l'attribut de sommet 0
- *     - Débinding du VAO
- *
- *  2) Dessin:
- *     - Binding du VAO
- *     - Appel à la fonction de dessin
- *     - Débinding du VAO
- *
- *  3) Libération des resources
- *
- */
-
+// Exo : TP2 - Triangle qui tourne + Envoyer des matrice
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -42,6 +20,30 @@ struct Vertex2DUV {
 	Vertex2DUV(glm::vec2 position) : position(position), texture(0, 0) {};
 	Vertex2DUV(glm::vec2 position, glm::vec2 texture) : position(position), texture(texture) {};
 };
+
+static glm::mat3 translate(float x, float y)
+{
+
+	glm::mat3 T = glm::mat3(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(x, y, 1));
+
+	return T;
+}
+
+static glm::mat3 scale(float x, float y)
+{
+
+	glm::mat3 S = glm::mat3(glm::vec3(x, 0, 0), glm::vec3(0, y, 0), glm::vec3(0, 0, 1));
+
+	return S;
+}
+
+static glm::mat3 rotate(float a)
+{
+
+	glm::mat3 R = glm::mat3(glm::vec3(glm::cos(a), glm::sin(a), 0), glm::vec3(-glm::sin(a), glm::cos(a), 0), glm::vec3(0, 0, 1));
+
+	return R;
+}
 
 static void key_callback(GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/)
 {
@@ -100,8 +102,10 @@ int main(int /*argc*/, char** argv)
 		return -1;
 	}
 
-	GLint uTimeLocation;
-	float uTimeValue = 0;
+	float time = 0;
+
+	GLint uModelMatrixLocation;
+	glm::mat3 uModelMatrixValue = rotate(time);
 
 	// Chargement des shaders, compilation et d'indiquer à OpenGL de les utiliser.
 	// ⚠️ On doit mettre ces variables dans un nouveau scope car sinon elle ne sont pas bien détruite à la fin du programme ce qui cause une erreur de segmentation
@@ -115,9 +119,14 @@ int main(int /*argc*/, char** argv)
 		// On dit à OpenGL de les utiliser
 		program.use();
 
-		uTimeLocation = glGetUniformLocation(program.getGLId(), "uTime");
+		uModelMatrixLocation = glGetUniformLocation(program.getGLId(), "uModelMatrix");
 
-		glUniform1f(uTimeLocation, uTimeValue);
+		glUniformMatrix3fv(
+			uModelMatrixLocation,
+			1,
+			GL_FALSE,
+			&uModelMatrixValue[0][0]
+		);
 	}
 
 	/* Hook input callbacks */
@@ -200,14 +209,21 @@ int main(int /*argc*/, char** argv)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
-		glClearColor(0, 0, 0, 1);
+		glClearColor(0, 1, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		/*********************************
 		* HERE SHOULD COME THE RENDERING CODE
 		*********************************/
 
-		uTimeValue += 0.01;
-		glUniform1f(uTimeLocation, uTimeValue);
+		time += 0.01;
+		uModelMatrixValue = rotate(time);
+
+		glUniformMatrix3fv(
+			uModelMatrixLocation,
+			1,
+			GL_FALSE,
+			&uModelMatrixValue[0][0]
+		);
 
 		// On bind le VAO pour récupérer les données
 		glBindVertexArray(vao);
