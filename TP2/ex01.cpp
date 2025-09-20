@@ -209,7 +209,7 @@ int main(int /*argc*/, char** argv)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
 
-		glClearColor(0, 1, 0, 1);
+		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		/*********************************
 		* HERE SHOULD COME THE RENDERING CODE
