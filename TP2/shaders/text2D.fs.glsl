@@ -1,10 +1,13 @@
 #version 330
 
-in vec3 vColor;
+uniform sampler2D uTexture;
+
+in vec2 vVertexTexture;
 
 out vec3 fFragColor;
 
 void main() {
 
-	fFragColor = vColor;
+	vec4 texColor = texture(uTexture, vVertexTexture);
+	fFragColor = texColor.rgb;
 }
