@@ -88,8 +88,8 @@ int main(int /*argc*/, char** /*argv*/)
 
 	glimac::Sphere sphere(1, 32, 16);
 	
-	ShapeVertex* vertices = sphere.getDataPointer();
-	GLsizei vertices_size = sphere.getVertexCount();
+	const glimac::ShapeVertex* vertices = sphere.getDataPointer();
+	const GLsizei vertices_size = sphere.getVertexCount();
 
 	// Remplissage du VBO, on envoie les données des vertices
 	glBufferData(
@@ -119,7 +119,8 @@ int main(int /*argc*/, char** /*argv*/)
 
 	// On active les deux attributs !
 	glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
-	glEnableVertexAttribArray(VERTEX_ATTR_COLOR);
+	glEnableVertexAttribArray(VERTEX_ATTR_NORMAL);
+	glEnableVertexAttribArray(VERTEX_ATTR_TEXCOORDS);
 
 
 	// On débind le VAO pour pas le remodifier par erreur
