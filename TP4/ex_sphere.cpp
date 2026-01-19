@@ -81,7 +81,49 @@ int main(int /*argc*/, char** /*argv*/)
 	 * HERE SHOULD COME THE INITIALIZATION CODE
 	 *********************************/
 
+	// Mise en place du VBO
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
 	glimac::Sphere sphere(1, 32, 16);
+	
+	ShapeVertex* vertices = sphere.getDataPointer();
+	GLsizei vertices_size = sphere.getVertexCount();
+
+	// Remplissage du VBO, on envoie les données des vertices
+	glBufferData(
+		GL_ARRAY_BUFFER, // La cible ou le VBO est bindé
+		vertices_size * sizeof(glimac::ShapeVertex), // Ici la taille du tableau est celle du nombre de vertices + la taille des données d'un vertexe
+		vertices, // Il faut donner seulement les données de l'objet
+		GL_STATIC_DRAW
+	); // Un flag qui dit à OpenGL ce qu'on va faire du buffer (ici on va juste faire un dessin satatique)
+
+	// On débind le buffer quand on as fini pour évitez de le modifer par erreur
+	glBindBuffer (GL_ARRAY_BUFFER, 0);
+
+
+	// Création du VAO (Vertex Array Object) -> Il vont nous servir à aider OpenGL à interprétez les données qu'on lui as envoyé dans le VBO
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+
+	// On bind le VAO avant de l'utiliser
+	glBindVertexArray(vao);
+
+	// Activation des attribut de vertex
+	
+	// Pour rendre le code plus clair ou utilise souvents des constantes pour définir les indexs des attribut.
+	const GLuint VERTEX_ATTR_POSITION = 3;
+	const GLuint VERTEX_ATTR_NORMAL = 5;
+	const GLuint VERTEX_ATTR_TEXCOORDS = 8;
+
+	// On active les deux attributs !
+	glEnableVertexAttribArray(VERTEX_ATTR_POSITION);
+	glEnableVertexAttribArray(VERTEX_ATTR_COLOR);
+
+
+	// On débind le VAO pour pas le remodifier par erreur
+	glBindVertexArray(vao);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window)) {
