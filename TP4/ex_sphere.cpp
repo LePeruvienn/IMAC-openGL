@@ -5,8 +5,6 @@
 #include <glimac/FilePath.hpp>
 #include <glimac/glm.hpp>
 #include <glimac/Sphere.hpp>
-#include <cstddef>
-#include <vector>
 
 int window_width  = 800;
 int window_height = 800;
@@ -122,6 +120,26 @@ int main(int /*argc*/, char** /*argv*/)
 	glEnableVertexAttribArray(VERTEX_ATTR_NORMAL);
 	glEnableVertexAttribArray(VERTEX_ATTR_TEXCOORDS);
 
+	// On rebind le VBO afin de le défnir comme les données qu'on veut lire
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glVertexAttribPointer(
+		VERTEX_ATTR_POSITION,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(glm::vec3),
+		(const GLvoid*) (offsetof(glimac::ShapeVertex, position))
+	);
+
+	glVertexAttribPointer(
+		VERTEX_ATTR_NORMAL,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(glm::vec3),
+		(const GLvoid*) (offsetof(glimac::ShapeVertex, normal))
+	);
 
 	// On débind le VAO pour pas le remodifier par erreur
 	glBindVertexArray(vao);
